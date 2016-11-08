@@ -28,6 +28,16 @@ $RECYCLE.BIN/
 .AppleDouble
 .LSOverride
 
+# ignore misc
+misc/*
+
+# Virtual Enviroment
+venv/*
+
+#PyCharm
+.idea/*
+__pycache__/*
+
 # Thumbnails
 ._*
 

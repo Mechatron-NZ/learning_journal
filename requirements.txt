@@ -1,0 +1,7 @@
+Flask
+Flask-Bcrypt==0.7.1
+Flask-Login==0.4.0
+Flask-WTF
+peewee==2.8.3
+coverage==4.2
+mock==2.0.0

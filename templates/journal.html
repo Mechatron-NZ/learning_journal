@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block header %}
+<a class="button icon-right" href="{{ url_for('new') }}"><span>New Entry</span> <i class="material-icons">add</i></a>
+{% endblock %}
+
+{% block content %}
+<div class="entry-list">
+    {% if journal %}
+        <div class="container">
+            <h1>{{user.username}}'s Journal</h1>
+            <h3>Tags Displayed</h3>
+            <a href="{{ url_for('index')}}">Home: </a>
+            {% for tag in tags %}
+                <a href="{{ url_for('tags', tag=tag) }}">{{ tag }}</a>
+            {% endfor %}
+            {% for entry in journal %}
+                <div class="entry-list">
+                    <article>
+                        <h2>
+                            <a href="{{ url_for('detail', entry_id=entry.id) }}">{{ entry.title }}</a>
+                        </h2>
+                        <p>
+                            <time data-time="{{ entry.date }}"
+                                  class="distime"
+                                  datetime="{{ entry.date.strftime('%Y-%m-%d')}}">{{ entry.date.strftime('%d-%B-%Y') }}</time>
+                        </p>
+                    </article>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+    <div class="container">
+        <div class="entry-list">
+            <h2 class="entry-list"> Welcome {{user.username}} to your new journal! </h2>
+            <p>
+                Start a new entry by pressing the new entry button at the top of the page.
+            </p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
