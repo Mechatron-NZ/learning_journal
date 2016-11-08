@@ -26,8 +26,8 @@
             <p>{{ entry.resources }}</p>
         </div>
         <div>
-            <a class="button icon-right" href="{{ url_for('delete', entry_id=entry.id) }}"><span>Delete Entry</span></a>
-            <a class="button icon-right" href="{{ url_for('edit', entry_id=entry.id) }}"><span>Edit Entry</span></a>
+            <a class="button icon-right" href="{{ url_for('delete', entry_id=entry.entry_id) }}"><span>Delete Entry</span></a>
+            <a class="button icon-right" href="{{ url_for('edit', entry_id=entry.entry_id) }}"><span>Edit Entry</span></a>
             <a class="button icon-right" href="{{ url_for('index') }}"><span>Home</span></a>
         </div>
     </article>
