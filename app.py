@@ -1,9 +1,10 @@
-from flask import (Flask, g, render_template, flash, redirect, url_for, abort,
+from flask import (Flask, send_from_directory, g, render_template, flash, redirect, url_for, abort,
                    request)
 from flask_login import (LoginManager, login_user, logout_user, login_required,
                          current_user)
 from flask_bcrypt import check_password_hash
 import re
+import os
 import forms
 import models
 
@@ -43,6 +44,13 @@ def after_request(response):
     """Close the database connection after each request."""
     g.db.close()
     return response
+
+
+@app.route('/favicon.ico')
+def favicon():
+    """Route/view for blank favicon to avoid 404 error when loading each page"""
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 @app.route('/', methods=('GET', 'POST'))
