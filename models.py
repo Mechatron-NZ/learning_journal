@@ -27,6 +27,10 @@ class User(UserMixin, Model):
         except IntegrityError:
             raise ValueError("User already exists")
 
+    def owner(self, entry):
+        return (entry.user == self)
+
+
     def get_journal(self):
         return Journal.select().where(Journal.user == self)
 

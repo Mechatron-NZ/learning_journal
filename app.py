@@ -54,6 +54,7 @@ def index():
         return render_template('welcome.html')
 
 @app.route('/tags/<string:tag>')
+@login_required
 def tags(tag):
     tag_list = [tag]
     user = current_user
@@ -62,16 +63,75 @@ def tags(tag):
 
 
 @app.route('/detail/<int:entry_id>')
+@login_required
 def detail(entry_id):
     entry = models.Journal.get(models.Journal.id == entry_id)
     tags = re.findall('\#[a-zA-Z0-9\-_]+', entry.tags)
-    return render_template('detail.html', entry=entry, tags=tags)
+    if current_user.owner(entry):
+        return render_template('detail.html', entry=entry, tags=tags)
+    else:
+        abort(404)
+
+@app.route('/delete/<int:entry_id>')
+@login_required
+def delete(entry_id):
+    entry = models.Journal.get(models.Journal.id == entry_id)
+    if current_user.owner(entry):
+        entry.delete_instance()
+        return redirect(url_for('index'))
+    else:
+        abort(404)
+
+@app.route('/edit/<int:entry_id>', methods=('GET', 'POST'))
+@login_required
+def edit(entry_id):
+    user = current_user
+    entry = models.Journal.get(models.Journal.id == entry_id)
+    date = entry.date
+    if user.owner(entry):
+        form = forms.EntryForm(obj=entry)
+        if form.validate_on_submit():
+            entry.user=g.user._get_current_object()
+            entry.title = form.title.data
+            entry.tags = form.tags.data
+            entry.date = form.date.data
+            entry.time_spent = form.time_spent.data
+            entry.learning = form.learning.data
+            entry.resources = form.resources.data
+            entry.save()
+            tags = re.findall('\#[a-zA-Z0-9\-_]+', form.tags.data)
+
+            tag_list =""
+            for tag in user.tags:
+                journal = user.get_tagged_journals(tag)
+                try:
+                    journal[0]
+                except IndexError:
+                    pass
+                else:
+                    tag_list = tag_list + tag
+
+            user.tags = tag_list
+            user.save()
+            
+            for tag in tags:
+                if tag not in user.tags:
+                    user.tags = (user.tags + " " + tag)
+                    user.save()
+
+
+            flash("Journal Entry added! Thanks!")
+            return redirect(url_for("index"))
+        return render_template('edit.html', form=form, date=date)
+    else:
+        abort(404)
+
 
 @app.route('/new', methods=('GET', 'POST'))
+@login_required
 def new():
     form = forms.EntryForm()
     if form.validate_on_submit():
-        print(form.title.data)
         new_journal = models.Journal.create(user=g.user._get_current_object(),
                                             title = form.title.data,
                                             tags = form.tags.data,
