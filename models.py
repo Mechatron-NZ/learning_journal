@@ -123,9 +123,6 @@ def add_tags(user, tags_field):
             user.save()
 
 
-
-
-
 def initialize():
     DATABASE.connect()
     DATABASE.create_tables([User, Journal], safe=True)
